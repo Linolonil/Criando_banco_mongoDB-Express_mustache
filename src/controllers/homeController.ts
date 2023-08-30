@@ -27,22 +27,29 @@ export const addUserAction = async (req: Request, res: Response) => {
     }
  };
 
- export const addAge = async (req: Request, res: Response) => {
+export const addAge = async (req: Request, res: Response) => {
     const userId = req.params.id; // Substitua pelo ID correto
 
     try {
-        const user = await User.findOneAndUpdate(
-            { _id: userId },
-            { $inc: { age: 1 } },
-            { new: true }
-        );
+        const user = await User.findOne({ _id: userId });
 
         if (!user) {
             console.log('Usuário não encontrado.');
             return res.redirect('/');
         }
 
-        console.log('Idade incrementada:', user.age);
+        if (user.age < 90) {
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: userId, age: { $lt: 90 } }, // Evitar incrementar se a idade for 90 ou mais
+                { $inc: { age: 1 } },
+                { new: true }
+            );
+
+            console.log(`A idade do usuário ${user.name.firstName} ${user.name.lastName} agora é ${user.age}.`);
+        } else {
+            console.log(`A idade do usuário ${user.name.firstName} ${user.name.lastName} é 90 ou mais, não pode ser incrementada.`);
+        }
+
         res.redirect('/');
     } catch (error) {
         console.error('Erro ao incrementar ano ao usuário:', error);
@@ -51,16 +58,12 @@ export const addUserAction = async (req: Request, res: Response) => {
 };
 
 
+
  export const home = async (req: Request, res: Response) => {
     try {
-        let lino = await User.findOneAndDelete({email:'linox999@gmail.com'})
-
-        if(lino){
-            await lino.save()
-        }
-
         // Buscando e ordenando todos os usuários por nome
         const users = await User.find({}).sort({ 'name.firstName': 1 });
+        
  
         res.render('pages/home', {
             users
