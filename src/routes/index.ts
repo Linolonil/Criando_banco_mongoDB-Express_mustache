@@ -6,6 +6,8 @@ import * as InfoController from '../controllers/infoControle'
 
  router.get('/', HomeController.home)
  router.post('/novo-usuario', HomeController.addUserAction)
+ router.get('/usuario/:id/addidade', HomeController.addAge)
+
 
 
  router.get('/contato', InfoController.contato )
