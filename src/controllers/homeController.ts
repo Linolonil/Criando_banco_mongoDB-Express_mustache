@@ -12,7 +12,7 @@ export const addUserAction = async (req: Request, res: Response) => {
         });
  
         // Limpando os campos após adicionar o usuário
-        const clearedFields = {
+        const limpandoCampos = {
             firstName: "",
             lastName: "",
             email: "",
